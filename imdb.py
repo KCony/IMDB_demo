@@ -22,7 +22,13 @@ import sys
 # result = re.findall(r"(\w+), (\w+)", "Liefeld, Rob")[0]
 # print(f'{result[1] } {result[0]}')  # Output: Rob Liefeld
 
-IBDM_FILE = "imdb_data.txt"
+if len(sys.argv) < 2:
+    #print(f'File name is not specified. Please try again and specify the data file name.')
+    IBDM_FILE = 'imdb_data.txt'
+    print(f'File name is not specified. Will try loading data from default file {IBDM_FILE}.')
+else:
+    IBDM_FILE = sys.argv[1]
+
 
 # actors = { "Tom Hanks": {"Forrest Gump", "Ternimal"}, "Sergey Gusev": {"Overlaw"}, "Stephen Salvati": {"Overlaw"} }
 # Old movies = { "Forrest Gump": 1987, "Terminal": 1995, "Overlaw": 2014 }
