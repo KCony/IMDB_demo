@@ -7,6 +7,7 @@ Created on Mon Jul 21 13:02:04 2025
 
 import re
 import sys
+import csv
 
 # match = re.search(r"(\d{4})-(\d{2})-(\d{2})", "Date: 2025-07-21 or something else")  # Example regex usage
 # if not match:
@@ -36,24 +37,15 @@ def read_data(IBDM_FILE):
     cnt = 0
     
     try:
-        for line in open(IBDM_FILE, encoding="utf-8"):
-            name, movie, release = [elem.strip() for elem in line.strip().split('|')]
-        # try:
-            name_match = re.findall(r"(\w+), (\w+)", name)
-            if len(name_match) > 0:
-                name = name_match[0]  # Extract the first match
-                name = name[1] + " " + name[0]  # Convert to "First Last" format
-    
-        # except IndexError:
-        #     print(f"Invalid name format: {name}. Expected format 'Last, First'. Skipping this entry.")
-        #     print(f"name, movie, release: {name}, {movie}, {release}")
-        #     sys.exit()
-      
-            release = int(release)
-            if name not in actors:
-                actors[name] = set()
-            actors[name].add(movie); movies_by_year.setdefault(release, set()).add(movie)
-            movies.setdefault(movie, set()).add(name)
+        with open(IBDM_FILE, 'r', encoding="utf-8") as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter='|')
+            for row in csv_reader:
+                name, movie, release = [elem.strip() for elem in row]
+                release = int(release)
+                if name not in actors:
+                    actors[name] = set()
+                actors[name].add(movie); movies_by_year.setdefault(release, set()).add(movie)
+                movies.setdefault(movie, set()).add(name)
     except FileNotFoundError as ex:
         print('Input data file is not found. Check command line arguments and try again. Exiting...')
         sys.exit()
