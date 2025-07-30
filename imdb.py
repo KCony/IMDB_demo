@@ -30,6 +30,10 @@ if len(sys.argv) < 2:
 else:
     IBDM_FILE = sys.argv[1]
 
+def csv_reader(file_name):
+    for row in open(file_name, 'r'):
+        yield row
+
 def read_data(IBDM_FILE):
     actors = {}
     movies_by_year = {}
@@ -37,15 +41,13 @@ def read_data(IBDM_FILE):
     cnt = 0
     
     try:
-        with open(IBDM_FILE, 'r', encoding="utf-8") as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter='|')
-            for row in csv_reader:
-                name, movie, release = [elem.strip() for elem in row]
-                release = int(release)
-                if name not in actors:
-                    actors[name] = set()
-                actors[name].add(movie); movies_by_year.setdefault(release, set()).add(movie)
-                movies.setdefault(movie, set()).add(name)
+        for row in csv_reader(IBDM_FILE):
+            name, movie, release = [elem.strip() for elem in row.split('|')]
+            release = int(release)
+            if name not in actors:
+                actors[name] = set()
+            actors[name].add(movie); movies_by_year.setdefault(release, set()).add(movie)
+            movies.setdefault(movie, set()).add(name)
     except FileNotFoundError as ex:
         print('Input data file is not found. Check command line arguments and try again. Exiting...')
         sys.exit()
