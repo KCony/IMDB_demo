@@ -29,36 +29,36 @@ if len(sys.argv) < 2:
 else:
     IBDM_FILE = sys.argv[1]
 
-
-# actors = { "Tom Hanks": {"Forrest Gump", "Ternimal"}, "Sergey Gusev": {"Overlaw"}, "Stephen Salvati": {"Overlaw"} }
-# Old movies = { "Forrest Gump": 1987, "Terminal": 1995, "Overlaw": 2014 }
-# movies_by_year = {1987: {"Forrest Gump"}, 1995: {"Terminal"}, 2014: {"Overlaw"} }
-# New movies = { "Forrest Gump": {"Tom Hanks", "Gary Sinise"}, "Terminal": {"Tom Hanks"}, "Overlaw": {"Sergey Gusev"} }
-
-
 def read_data(IBDM_FILE):
     actors = {}
     movies_by_year = {}
     movies = {}
     cnt = 0
-    for line in open(IBDM_FILE, encoding="utf-8"):
-        name, movie, release = [elem.strip() for elem in line.strip().split('|')]
-    # try:
-        name_match = re.findall(r"(\w+), (\w+)", name)
-        if len(name_match) > 0:
-            name = name_match[0]  # Extract the first match
-            name = name[1] + " " + name[0]  # Convert to "First Last" format
-
-    # except IndexError:
-    #     print(f"Invalid name format: {name}. Expected format 'Last, First'. Skipping this entry.")
-    #     print(f"name, movie, release: {name}, {movie}, {release}")
-    #     sys.exit()
-  
-        release = int(release)
-        if name not in actors:
-            actors[name] = set()
-        actors[name].add(movie); movies_by_year.setdefault(release, set()).add(movie)
-        movies.setdefault(movie, set()).add(name)
+    
+    try:
+        for line in open(IBDM_FILE, encoding="utf-8"):
+            name, movie, release = [elem.strip() for elem in line.strip().split('|')]
+        # try:
+            name_match = re.findall(r"(\w+), (\w+)", name)
+            if len(name_match) > 0:
+                name = name_match[0]  # Extract the first match
+                name = name[1] + " " + name[0]  # Convert to "First Last" format
+    
+        # except IndexError:
+        #     print(f"Invalid name format: {name}. Expected format 'Last, First'. Skipping this entry.")
+        #     print(f"name, movie, release: {name}, {movie}, {release}")
+        #     sys.exit()
+      
+            release = int(release)
+            if name not in actors:
+                actors[name] = set()
+            actors[name].add(movie); movies_by_year.setdefault(release, set()).add(movie)
+            movies.setdefault(movie, set()).add(name)
+    except FileNotFoundError as ex:
+        print('Input data file is not found. Check command line arguments and try again. Exiting...')
+        sys.exit()
+    except IOError:
+        print("An I/O error occurred while reading the file.")
     return actors, movies_by_year, movies
 
 def proc_all_actors(actors):
